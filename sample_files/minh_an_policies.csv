@@ -1,0 +1,5 @@
+﻿MaChinhSach,CapDuyet,ChietKhauToiDa,GiaTriToiThieu,GiaTriToiDa,DieuKien
+POL-NVKD-STD,Nhân viên Kinh doanh (Tự duyệt),5,0,300000000,"Đủ tồn kho, đáp ứng lead time, CK <= 5%"
+POL-NVKD-MID,Nhân viên Kinh doanh (Tự duyệt),8,300000001,600000000,"Đơn 300-600 triệu, đủ tồn kho, CK <= 8%"
+POL-MGR-ESC,Trưởng phòng Kinh doanh,15,0,1200000000,CK vượt hạn mức NVKD đến 15% hoặc đơn > 600tr hoặc thiếu tồn/gấp
+POL-DIR-ESC,Ban Giám đốc,25,1200000001,999999999999,CK > 15% hoặc đơn > 1.2 tỷ VNĐ

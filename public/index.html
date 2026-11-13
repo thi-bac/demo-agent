@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minh An AI | Hệ thống Báo giá B2B Thân thiện &amp; Zero-Trust</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+  <!-- ==================== 1. COMPACT TOP NAVIGATION (PDF GURU STYLE) ==================== -->
+  <header class="pg-navbar">
+    <div class="pg-nav-inner">
+      <div class="pg-brand" id="brandHomeBtn" title="Về trang tiếp nhận chính">
+        <div class="pg-logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div class="pg-brand-text">
+          <span class="pg-brand-name">minh an</span>
+          <span class="pg-brand-tag">B2B</span>
+        </div>
+      </div>
+
+      <nav class="pg-nav-tabs" aria-label="Điều hướng chính">
+        <button class="nav-item pg-tab active" data-view="intake-home">Tiếp nhận</button>
+        <button class="nav-item pg-tab" data-view="workspace">Hồ sơ (<span id="oppNavBadge">0</span>)</button>
+        <button class="nav-item pg-tab" data-view="inventory">Kho .xlsx</button>
+        <button class="nav-item pg-tab" data-view="workflow">Sơ đồ B1→B9</button>
+        <button class="nav-item pg-tab" data-view="settings">Quản trị</button>
+      </nav>
+
+      <div class="pg-nav-actions">
+        <div id="agentOnlineBadge" class="online-pill" title="Trạng thái Máy chủ &amp; Gemini AI">
+          <span class="pulse-dot"></span>
+          <span id="agentOnlineText">Sẵn sàng</span>
+        </div>
+
+        <div class="notif-wrap">
+          <button id="notifBellBtn" class="notif-btn" title="Thông báo hệ thống">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span id="notifBadge" class="notif-badge">0</span>
+          </button>
+          <div id="notifDropdown" class="notif-dropdown">
+            <div class="notif-dd-head">
+              <strong>Thông báo</strong>
+              <button id="btnMarkAllRead" class="btn-link-sm">Đã đọc hết</button>
+            </div>
+            <div id="notifList" class="notif-dd-body custom-scroll"></div>
+          </div>
+        </div>
+
+        <div class="role-switcher-wrap">
+          <div class="user-avatar" id="roleAvatar">NV</div>
+          <select id="roleSelector" class="role-select" title="Chọn vai trò xử lý Zero-Trust">
+            <option value="NVKD">NVKD (Nguyễn Văn A)</option>
+            <option value="KHO">Nhân viên Kho</option>
+            <option value="TRUONG_PHONG">Trưởng phòng KD</option>
+            <option value="GIAM_DOC">Giám đốc KD</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="pg-main">
+    <!-- ==================== VIEW 0: COMPACT PDF GURU LANDING & DROPZONE ==================== -->
+    <section id="view-intake-home" class="view-section active">
+      <div class="pg-landing-white">
+        <!-- 1. Hero + Signature Pastel-Orange Dropzone -->
+        <div class="pg-hero-wrap">
+          <h1 class="pg-hero-title">Xử lý Yêu cầu Báo giá B2B</h1>
+          <p class="pg-hero-sub">Chuẩn hóa yêu cầu, đối soát tồn kho &amp; tính chiết khấu tự động chỉ trong vài giây.</p>
+
+          <!-- Compact Mode Toggle -->
+          <div class="pg-mode-switch">
+            <button type="button" class="pg-mode-btn active" data-drop-mode="file">📊 Tải lên File Excel (.xlsx)</button>
+            <button type="button" class="pg-mode-btn" data-drop-mode="text">✉ Dán Email / Zalo KH</button>
+          </div>
+
+          <!-- Outer Dashed Frame (PDF Guru Signature) -->
+          <div class="pg-drop-outer">
+            <!-- Mode 1: Solid Pastel-Orange Dropzone (Default like Screenshot 1) -->
+            <div id="dropModeFile" class="pg-drop-panel active">
+              <label id="heroDropzone" class="pg-solid-dropzone" for="quickFileInput">
+                <div class="pg-plus-circle">+</div>
+                <div class="pg-solid-title">Tải lên hoặc kéo thả file Excel (.xlsx)</div>
+                <div class="pg-solid-sub">Chỉ nhận định dạng .xlsx • Tối đa 100 MB • Zero-Trust</div>
+                <input id="quickFileInput" type="file" style="display:none;" />
+              </label>
+              <div class="pg-drop-mini-bar">
+                <select id="quickFileTarget" class="filter-select filter-select-sm">
+                  <option value="auto">Tự nhận diện bảng (.xlsx)</option>
+                  <option value="requests">Yêu cầu KH (.xlsx)</option>
+                  <option value="products">Sản phẩm &amp; Giá (.xlsx)</option>
+                  <option value="inventory">Tồn kho (.xlsx)</option>
+                  <option value="policies">Chính sách CK (.xlsx)</option>
+                </select>
+                <a class="pg-mini-link" href="/sample_files/minh_an_all_in_one.xlsx" download>⬇ Tải .xlsx mẫu</a>
+              </div>
+            </div>
+
+            <!-- Mode 2: Compact Text Input -->
+            <div id="dropModeText" class="pg-drop-panel">
+              <div class="pg-text-inner">
+                <textarea id="singleRequestInput" rows="4" class="pg-textarea" placeholder="Dán nguyên văn email, tin nhắn Zalo/Skype hoặc yêu cầu báo giá của khách hàng..."></textarea>
+                <div class="pg-drop-toolbar">
+                  <select id="presetScenarioSelect" class="filter-select filter-select-sm">
+                    <option value="">-- Chọn nhanh tình huống mẫu --</option>
+                    <option value="0">Mẫu 1: Đủ thông tin &amp; trong hạn mức NVKD</option>
+                    <option value="1">Mẫu 2: CK 12% → Vượt quyền Trưởng phòng</option>
+                    <option value="2">Mẫu 3: Thiếu ngân sách &amp; deadline → Cờ Vàng</option>
+                    <option value="3">Mẫu 4: Thiếu tồn Cisco &amp; hạn 4 ngày (Nguy cấp)</option>
+                    <option value="4">Mẫu 5: KH dẫn giá cũ &amp; ngoài danh mục</option>
+                    <option value="5">Mẫu 6: Dự án 12 tỷ, CK 18% (VIP + Nguy cấp)</option>
+                  </select>
+                  <button id="btnRunSingle" class="btn btn-orange btn-sm">Bắt đầu Xử lý (B1.2) →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="quickIngestFeedback" class="feedback-line" style="text-align:center;"></div>
+
+          <!-- Compact Quick-Jump & Live Stats Line -->
+          <div class="pg-compact-stats">
+            <span>Đang theo dõi <strong id="kpiTotal">0</strong> hồ sơ (<strong id="kpiVipUrgent">0</strong> VIP/Nguy cấp)</span>
+            <span>•</span>
+            <span>Tổng giá trị: <strong id="kpiValue">0 đ</strong></span>
+            <span>•</span>
+            <button id="btnGoToWorkspace" class="pg-inline-cta">
+              Mở <span id="kpiPendingOpsMgr">0</span> hồ sơ chờ duyệt →
+            </button>
+            <span style="display:none;" id="kpiReadySent">0</span>
+          </div>
+        </div>
+
+        <!-- 2. How it works (4 Compact Steps + Laptop Graphic - Screenshot 2) -->
+        <div class="pg-section">
+          <h2 class="pg-sec-title">Quy trình xử lý trong 4 bước</h2>
+          <div class="pg-how-grid">
+            <div class="pg-steps-timeline">
+              <div class="pg-step-row">
+                <div class="pg-step-ico ico-mint">📥</div>
+                <div class="pg-step-txt"><strong>1. Tiếp nhận &amp; Gatekeeper (.xlsx)</strong> — Dán tin nhắn khách hàng hoặc tải bảng Excel chuẩn; tệp sai định dạng bị chặn ngay.</div>
+              </div>
+              <div class="pg-step-row">
+                <div class="pg-step-ico ico-blue">✨</div>
+                <div class="pg-step-txt"><strong>2. AI Làm sạch &amp; Khớp Kho/Giá</strong> — Tự động loại bỏ phần thừa, gắn cờ nghi vấn và đối soát tồn kho theo từng SKU.</div>
+              </div>
+              <div class="pg-step-row">
+                <div class="pg-step-ico ico-orange">🛡️</div>
+                <div class="pg-step-txt"><strong>3. Kiểm tra Chiết khấu &amp; Duyệt</strong> — Đối chiếu hạn mức 3 cấp (NVKD / Trưởng phòng / Giám đốc) theo chuẩn Zero-Trust.</div>
+              </div>
+              <div class="pg-step-row">
+                <div class="pg-step-ico ico-rose">📤</div>
+                <div class="pg-step-txt"><strong>4. Xuất 4 Đầu ra &amp; Gửi khách</strong> — Sinh Phương án, Email nháp, file <code>.xlsx</code> 5 sheet và Báo cáo text hoàn chỉnh.</div>
+              </div>
+            </div>
+
+            <div class="pg-how-visual" aria-hidden="true">
+              <div class="pg-laptop-mock">
+                <div class="pg-laptop-screen">
+                  <div class="pg-doc-card">
+                    <div class="pg-doc-lines"><span></span><span></span><span></span></div>
+                    <div class="pg-doc-badge">MINH AN B2B</div>
+                  </div>
+                </div>
+                <div class="pg-laptop-base"></div>
+                <div class="pg-float-badge fb-blue">✓</div>
+                <div class="pg-float-badge fb-orange">⚡</div>
+                <div class="pg-float-badge fb-mint">↓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Why Choose Minh An (6 Compact Cards 3x2 - Screenshot 3) -->
+        <div class="pg-section">
+          <h2 class="pg-sec-title">Tại sao chọn Minh An B2B Hub</h2>
+          <div class="pg-why-grid">
+            <div class="pg-why-card">
+              <div class="pg-why-ico ico-orange">⚡</div>
+              <h3>Xử lý trọn gói B1 → B9</h3>
+              <p>Gộp toàn bộ tiếp nhận, đối soát kho, tính chiết khấu và xuất báo cáo trong một màn hình gọn nhẹ.</p>
+            </div>
+            <div class="pg-why-card">
+              <div class="pg-why-ico ico-blue">🔒</div>
+              <h3>Nguyên tắc Zero-Trust</h3>
+              <p>AI chỉ chuẩn bị và đề xuất; mọi điểm chạm về dữ liệu, giá, kho và gửi khách đều do con người duyệt.</p>
+            </div>
+            <div class="pg-why-card">
+              <div class="pg-why-ico ico-mint">📊</div>
+              <h3>Gatekeeper chuẩn .xlsx</h3>
+              <p>Chặn tự động file .csv/.pdf sai chuẩn và tự sinh file báo cáo Excel 5 sheet sạch sẽ, không lỗi công thức.</p>
+            </div>
+            <div class="pg-why-card">
+              <div class="pg-why-ico ico-rose">🔄</div>
+              <h3>Hoàn tác thông minh</h3>
+              <p>Khi Giám đốc trả lại hoặc chỉnh sửa bước trước, hệ thống tự động hủy kết quả cũ để tránh sai lệch.</p>
+            </div>
+            <div class="pg-why-card">
+              <div class="pg-why-ico ico-indigo">⏱️</div>
+              <h3>Nhanh &amp; Chính xác</h3>
+              <p>Cảnh báo màu Xanh/Vàng/Đỏ rõ ràng cho từng mã hàng, rút ngắn thời gian lập báo giá từ hàng giờ xuống vài phút.</p>
+            </div>
+            <div class="pg-why-card">
+              <div class="pg-why-ico ico-mint">👥</div>
+              <h3>Phân quyền 5 vai trò</h3>
+              <p>Tách bạch quyền thao tác cho NVKD, Nhân viên Kho, Trưởng phòng, Giám đốc và Quản trị viên Admin.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. FAQ Accordion (Dashed Borders - Screenshot 4) -->
+        <div class="pg-section pg-faq-sec">
+          <h2 class="pg-sec-title">Câu hỏi thường gặp</h2>
+          <div class="pg-faq-list">
+            <details class="pg-faq-item">
+              <summary>Minh An B2B Hub hỗ trợ những định dạng tệp nào?</summary>
+              <p>Để đảm bảo an toàn dữ liệu tĩnh, Gatekeeper chỉ chấp nhận tệp Excel chuẩn <code>.xlsx</code> cho Sản phẩm, Tồn kho và Chính sách. Dữ liệu động từ khách hàng có thể dán trực tiếp từ Email, Zalo hoặc Skype.</p>
+            </details>
+            <details class="pg-faq-item">
+              <summary>AI có tự động gửi báo giá cho khách hàng không?</summary>
+              <p>Không. Theo nguyên tắc Zero-Trust, AI chỉ làm sạch dữ liệu và soạn sẵn 4 đầu ra; NVKD và Giám đốc Kinh doanh phải rà soát và bấm duyệt trước khi gửi.</p>
+            </details>
+            <details class="pg-faq-item">
+              <summary>Khi chiết khấu vượt thẩm quyền của NVKD thì xử lý thế nào?</summary>
+              <p>Hệ thống tự động chuyển hồ sơ sang Bước 5 (Escalate) để Trưởng phòng Kinh doanh hoặc Ban Giám đốc xem xét, duyệt hoặc từ chối kèm lý do.</p>
+            </details>
+            <details class="pg-faq-item">
+              <summary>File Excel báo cáo xuất ra ở Bước 6 gồm những gì?</summary>
+              <p>File <code>.xlsx</code> gồm đủ 5 sheet: <code>Thong_Tin_Khach</code>, <code>Bang_Audit_Kho</code>, <code>Chiet_Khau_SP</code>, <code>Chiet_Khau_Tong</code> và <code>Lich_Su_Phe_Duyet</code>.</p>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Compact Dark Footer (Screenshot 5) -->
+      <footer class="pg-footer">
+        <div class="pg-footer-inner">
+          <div class="pg-footer-brand">
+            <div class="pg-brand-name" style="color:#fff;">minh an <span style="color:#ff9052;">B2B</span></div>
+            <p class="pg-footer-note">Hệ thống Xử lý Báo giá B2B Zero-Trust</p>
+          </div>
+          <div class="pg-footer-col">
+            <h4>Công cụ</h4>
+            <a href="#" onclick="return false;" data-jump-view="intake-home">Tiếp nhận Yêu cầu</a>
+            <a href="#" onclick="return false;" data-jump-view="workspace">Xử lý Hồ sơ</a>
+            <a href="#" onclick="return false;" data-jump-view="inventory">Kho Dữ liệu .xlsx</a>
+          </div>
+          <div class="pg-footer-col">
+            <h4>Quy trình</h4>
+            <a href="#" onclick="return false;" data-jump-view="workflow">Sơ đồ Luồng B1→B9</a>
+            <a href="#" onclick="return false;" data-jump-view="settings">Cấu hình Hạn mức</a>
+          </div>
+          <div class="pg-footer-col">
+            <h4>Vai trò</h4>
+            <span>NVKD • Nhân viên Kho</span>
+            <span>Trưởng phòng • Giám đốc</span>
+          </div>
+        </div>
+        <div class="pg-footer-bottom">
+          © 2026 Công ty Minh An. Bảo mật nội bộ &amp; Zero-Trust Workflow.
+        </div>
+      </footer>
+    </section>
+
+    <!-- ==================== VIEW 1: CLEAN SINGLE-FOCUS STEP WORKSPACE ==================== -->
+    <section id="view-workspace" class="view-section">
+      <div class="pg-container">
+        <!-- Compact Top Filter & Search Strip -->
+        <div class="ws-toolbar">
+          <div class="ws-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="globalSearchInput" type="text" placeholder="Tìm mã hồ sơ, công ty hoặc NVKD..." />
+          </div>
+          <div class="ws-toolbar-right">
+            <select id="filterStatus" class="filter-select" title="Lọc trạng thái">
+              <option value="ALL">Tất cả hồ sơ</option>
+              <option value="PRIORITY">VIP / Nguy cấp</option>
+              <option value="B1">Bước 1 (Làm sạch/JSON)</option>
+              <option value="B3">Chờ Kho / Giá (B3)</option>
+              <option value="B5_B8">Chờ Quản lý / GĐ</option>
+              <option value="B9">Sẵn sàng / Đã gửi</option>
+            </select>
+            <button id="btnExportCSV" class="btn btn-light btn-sm">Xuất CSV</button>
+            <button id="btnExportJSON" class="btn btn-light btn-sm">Xuất JSON</button>
+          </div>
+        </div>
+
+        <!-- Horizontal Dossier Selector Strip (No cramped vertical sidebar!) -->
+        <div class="ws-dossier-strip-wrap">
+          <div class="ws-strip-label">Chọn hồ sơ để xử lý (<span id="oppCount">0</span>):</div>
+          <div id="oppList" class="ws-dossier-strip custom-scroll"></div>
+        </div>
+
+        <!-- Centered Single-Column Step-by-Step Focus Card -->
+        <div id="detailPanel" class="ws-focus-card">
+          <div class="empty-box">Chọn một hồ sơ phía trên để bắt đầu xử lý từng bước.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: KHO DỮ LIỆU & GATEKEEPER (.XLSX) ==================== -->
+    <section id="view-inventory" class="view-section">
+      <div class="pg-container">
+        <div class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h2>Kho Dữ liệu Tĩnh &amp; Gatekeeper (.xlsx Bắt buộc)</h2>
+              <p class="subtext">Chỉ chấp nhận định dạng <strong>.xlsx</strong>. Mọi tệp <code>.csv</code>, <code>.txt</code>, <code>.pdf</code> hoặc Google Docs sẽ bị chặn và báo đỏ.</p>
+            </div>
+            <div class="btn-row">
+              <button id="btnLoadDemoAll" class="btn btn-light">Khôi phục Dữ liệu Chuẩn</button>
+              <a class="btn btn-peach-outline" href="/sample_files/minh_an_all_in_one.xlsx" download>Tải mẫu .XLSX (4 trang tính)</a>
+            </div>
+          </div>
+
+          <div id="gatekeeperBanner" class="gatekeeper-banner" style="display:none;"></div>
+
+          <div class="ds-grid">
+            <div class="ds-card">
+              <div class="ds-head"><h3>1. Danh mục Sản phẩm &amp; Giá (.xlsx)</h3><span class="count-chip" id="count-products">0</span></div>
+              <input type="file" class="ds-file" data-target="products" />
+            </div>
+            <div class="ds-card">
+              <div class="ds-head"><h3>2. Tồn khả dụng &amp; Lead-time (.xlsx)</h3><span class="count-chip" id="count-inventory">0</span></div>
+              <input type="file" class="ds-file" data-target="inventory" />
+            </div>
+            <div class="ds-card">
+              <div class="ds-head"><h3>3. Chính sách Chiết khấu (.xlsx)</h3><span class="count-chip" id="count-policies">0</span></div>
+              <input type="file" class="ds-file" data-target="policies" />
+            </div>
+            <div class="ds-card">
+              <div class="ds-head"><h3>4. Danh sách Yêu cầu (.xlsx)</h3><span class="count-chip" id="count-requests">0</span></div>
+              <input type="file" class="ds-file" data-target="requests" />
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>Xem trước Bảng Dữ liệu Hiệu lực</h3>
+            <select id="previewTableSelect" class="filter-select">
+              <option value="products">Danh mục Sản phẩm &amp; Giá</option>
+              <option value="inventory">Tồn khả dụng &amp; Lead-time</option>
+              <option value="policies">Chính sách Chiết khấu</option>
+              <option value="salesTeam">Đội ngũ NVKD</option>
+              <option value="requests">Danh sách Yêu cầu</option>
+            </select>
+          </div>
+          <div id="dataPreviewContainer" class="table-wrap"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: SƠ ĐỒ LUỒNG TO-BE (B1 -> B9) ==================== -->
+    <section id="view-workflow" class="view-section">
+      <div class="pg-container">
+        <div class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h2>Sơ đồ Luồng Tổng To-Be (B1.1 → B9) — Chuẩn A2 Zero-Trust</h2>
+              <p class="subtext">Vị trí hiện tại của hồ sơ đang chọn: <strong id="wfSelectedLabel">Chưa chọn</strong></p>
+            </div>
+            <button id="btnTestDownloadB6Report" class="btn btn-orange btn-sm">⬇ Tạo &amp; Tải thử File Báo cáo B6 (.xlsx)</button>
+          </div>
+
+          <div class="zt-flow-tree" id="workflowDiagram">
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node" data-node="B1.1"><strong>[B1.1] Tiếp nhận + Gatekeeper (.xlsx)</strong><span>Dữ liệu động (Email/Zalo/Form) + Tĩnh (.xlsx bắt buộc)</span></div>
+              <div class="zt-branch-right zt-branch-red">──lỗi──► <strong>CHẶN + báo đỏ</strong></div>
+            </div>
+            <div class="zt-down-arrow">▼</div>
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node" data-node="B1.2"><strong>[B1.2] AI làm sạch</strong><span>Bản làm sạch + cờ nghi vấn (Vàng/Đỏ) + nhật ký thay đổi</span></div>
+            </div>
+            <div class="zt-down-arrow">▼</div>
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node" data-node="B1.3"><strong>[B1.3] NVKD duyệt bản làm sạch</strong><span>2 cột Diff • Khóa nút Duyệt nếu còn cờ Đỏ</span></div>
+              <div class="zt-branch-right zt-branch-amber">──Làm lại──► <strong>B1.2</strong></div>
+            </div>
+            <div class="zt-down-arrow">▼ <em>Duyệt (không còn cờ Đỏ)</em></div>
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node" data-node="B1.4"><strong>[B1.4] Intake Agent → JSON + thẻ VIP/Nguy cấp → NVKD xác nhận</strong><span>Ngưỡng VIP ≥ 10 tỷ • Từ khóa Nguy cấp • Gán Senior KAM</span></div>
+            </div>
+            <div class="zt-down-arrow">▼</div>
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node" data-node="B2"><strong>[B2] Đối soát Kho &amp; Giá → Bảng Audit (Xanh / Vàng / Đỏ)</strong><span>Khớp SKU (gợi ý ≤ 3 mã), giá mới nhất, tồn khả dụng, lead-time vs deadline</span></div>
+            </div>
+            <div class="zt-down-arrow">▼</div>
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node" data-node="B3"><strong>[B3] Toàn Xanh: NVKD xác nhận │ Có Vàng/Đỏ: Kho chốt phương án → NVKD xác nhận</strong><span>Giao từng phần / SKU thay thế / Từ chối • Khóa nếu còn dòng Đỏ</span></div>
+            </div>
+            <div class="zt-down-arrow">▼</div>
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node" data-node="B4">
+                <strong>[B4] Bảng CK theo SP + Bảng CK tổng đơn</strong>
+                <div class="zt-sub-branches">
+                  <span class="zt-tag-ok">├─ Pass ──────────────► thẳng B6</span>
+                  <span class="zt-tag-amber">├─ Chỉnh sửa → AI tính lại → B4</span>
+                  <span class="zt-tag-esc">└─ Escalate ▼ (vượt hạn mức NVKD)</span>
+                </div>
+              </div>
+            </div>
+            <div class="zt-down-arrow">▼</div>
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node" data-node="B5">
+                <strong>[B5] Trưởng phòng / BGĐ</strong>
+                <div class="zt-sub-branches">
+                  <span class="zt-tag-ok">├─ Duyệt / Duyệt có điều kiện ──► B6</span>
+                  <span class="zt-tag-red">└─ Từ chối (tối đa 3 vòng) → NVKD làm lại B4</span>
+                </div>
+              </div>
+            </div>
+            <div class="zt-down-arrow">▼</div>
+            <div class="zt-node-wrap">
+              <div class="wf-node zt-node" data-node="B6"><strong>[B6] AI sinh: Phương án + Email nháp + .xlsx (5 sheet) + Báo cáo text</strong><span>Tự kiểm tra khớp số liệu email vs .xlsx và không còn biến {{...}}</span></div>
+            </div>
+            <div class="zt-down-arrow">▼</div>
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node" data-node="B7"><strong>[B7] NVKD duyệt/sửa ──[Gửi lên Giám đốc]</strong><span>Cảnh báo &amp; trả về B4 nếu sửa số tiền tay ngoài kiểm soát</span></div>
+            </div>
+            <div class="zt-down-arrow">▼</div>
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node" data-node="B8"><strong>[B8] Giám đốc KD</strong><span>Duyệt cuối khóa nội dung</span></div>
+              <div class="zt-branch-right zt-branch-amber">──Trả lại──► <strong>B7 / B4 / B3</strong></div>
+            </div>
+            <div class="zt-down-arrow">▼ <em>Duyệt</em></div>
+            <div class="zt-flow-row">
+              <div class="wf-node zt-node wf-end" data-node="B9"><strong>[B9] NVKD bấm [Gửi khách] → Hoàn tất + log</strong><span>Lưu phiên bản đã gửi &amp; nhắc theo dõi sau N ngày</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: ADMIN & CẤU HÌNH HỆ THỐNG ==================== -->
+    <section id="view-settings" class="view-section">
+      <div class="pg-container">
+        <div class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h2>Cấu hình Quản trị (Chỉ vai trò Admin được phép sửa)</h2>
+              <p class="subtext" id="adminRoleLockMsg">Đang kiểm tra quyền hạn vai trò hiện tại...</p>
+            </div>
+            <button id="btnSaveAdminConfig" class="btn btn-orange">Lưu Cấu hình Admin</button>
+          </div>
+
+          <div class="settings-grid">
+            <div class="setting-box">
+              <label class="field-lbl">Hạn mức chiết khấu NVKD (%)</label>
+              <input id="cfgNvkdLimit" type="number" step="0.5" class="text-inp" value="10" />
+              <label class="field-lbl" style="margin-top:10px;">Quy định cứng tối đa công ty (%)</label>
+              <input id="cfgHardLimit" type="number" step="0.5" class="text-inp" value="15" />
+              <label class="field-lbl" style="margin-top:10px;">Ngưỡng phân hạng VIP (VNĐ)</label>
+              <input id="cfgVipThreshold" type="number" step="100000000" class="text-inp" value="10000000000" />
+            </div>
+            <div class="setting-box">
+              <label class="field-lbl">Từ khóa nhận diện Nguy cấp (cách nhau bởi dấu phẩy)</label>
+              <input id="cfgUrgentKeywords" type="text" class="text-inp" value="gấp, ngay lập tức, chậm nhất tuần sau, đang dừng dự án, khẩn" />
+              <label class="field-lbl" style="margin-top:10px;">Số vòng từ chối tối đa trước khi báo BGĐ</label>
+              <input id="cfgMaxReject" type="number" class="text-inp" value="3" />
+              <label class="field-lbl" style="margin-top:10px;">Số ngày nhắc theo dõi sau gửi khách</label>
+              <input id="cfgFollowUpDays" type="number" class="text-inp" value="3" />
+            </div>
+          </div>
+          <div id="adminSaveFeedback" class="feedback-line"></div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h2>Kết nối Gemini AI &amp; Nhật ký Lỗi Hệ thống</h2>
+              <p class="subtext" id="serverLlmStatusText">Đang kiểm tra trạng thái khóa từ máy chủ...</p>
+            </div>
+            <button id="btnTestLLM" class="btn btn-peach-outline">Kiểm tra kết nối Gemini API</button>
+          </div>
+          <div class="settings-grid">
+            <div class="setting-box">
+              <label class="toggle-row">
+                <input id="toggleUseLLM" type="checkbox" checked />
+                <span><strong>Sử dụng Gemini AI hỗ trợ làm sạch &amp; soạn thảo</strong></span>
+              </label>
+              <input id="geminiKeyInput" type="password" class="text-inp" placeholder="Đang dùng khóa .env máy chủ (tùy chọn ghi đè)..." />
+              <div id="llmTestFeedback" class="feedback-line"></div>
+            </div>
+            <div class="setting-box">
+              <strong style="font-size:13px;">Nhật ký Chặn Gatekeeper &amp; Lỗi Hệ thống</strong>
+              <div id="systemErrorLogList" class="sys-err-list custom-scroll">Chưa có lỗi hệ thống nào.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
